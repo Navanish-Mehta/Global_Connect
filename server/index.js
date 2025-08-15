@@ -21,7 +21,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: [
+      process.env.CLIENT_URL || "http://localhost:3000",
+      "https://global-connect-umber.vercel.app",
+      "https://global-connect-git-main-navanish-mehtas-projects.vercel.app"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   },
@@ -48,7 +52,12 @@ app.set('io', io);
 
 // CORS configuration - more permissive for development
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: [
+    'http://localhost:3000', 
+    'http://127.0.0.1:3000',
+    'https://global-connect-umber.vercel.app', // Add your Vercel domain
+    'https://global-connect-git-main-navanish-mehtas-projects.vercel.app' // Add your Vercel domain with git branch
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
