@@ -22,8 +22,7 @@ const Network = () => {
     connectionRequests, 
     searchResults, 
     networkUsers,
-    loading,
-    pagination
+    loading
   } = useSelector((state) => state.user);
   
   const [searchQuery, setSearchQuery] = useState('');

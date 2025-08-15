@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { logout } from '../redux/slices/authSlice';
 import { getUsers, deleteUser, banUser, unbanUser } from '../redux/slices/userSlice';
 import { getPostsAdmin, deletePost } from '../redux/slices/postSlice';
-import { getJobsAdmin, createJob, deleteJob, getJobApplications, updateApplicationStatus } from '../redux/slices/jobSlice';
+import { getJobsAdmin, createJob, deleteJob, updateApplicationStatus } from '../redux/slices/jobSlice';
 
 const Admin = () => {
   const dispatch = useDispatch();
@@ -45,14 +45,8 @@ const Admin = () => {
     }
   }, [dispatch, user]);
 
-  // Load job applications when applications tab is selected
-  useEffect(() => {
-    if (activeTab === 'applications' && jobs.length > 0) {
-      loadJobApplications();
-    }
-  }, [activeTab, jobs]);
-
-  const loadJobApplications = async () => {
+  // Build applications table from current jobs list
+  const loadJobApplications = useCallback(async () => {
     setApplicationsLoading(true);
     try {
       const applications = [];
@@ -72,7 +66,14 @@ const Admin = () => {
     } finally {
       setApplicationsLoading(false);
     }
-  };
+  }, [jobs]);
+
+  // Load job applications when applications tab is selected
+  useEffect(() => {
+    if (activeTab === 'applications' && jobs.length > 0) {
+      loadJobApplications();
+    }
+  }, [activeTab, jobs, loadJobApplications]);
 
   const handleUpdateApplicationStatus = async (applicationId, status) => {
     try {
