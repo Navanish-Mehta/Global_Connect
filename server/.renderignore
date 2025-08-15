@@ -1,0 +1,9 @@
+node_modules
+tests
+*.log
+client
+build
+dist
+.git
+.github
+

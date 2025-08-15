@@ -1,0 +1,69 @@
+{
+  "info": {
+    "name": "Global Connect API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "global-connect-api-collection"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{BASE_URL}}/auth/login", "host": ["{{BASE_URL}}"], "path": ["auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Admin Users",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{TOKEN}}" } ],
+            "url": { "raw": "{{BASE_URL}}/users/admin", "host": ["{{BASE_URL}}"], "path": ["users","admin"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Conversations",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{TOKEN}}" } ],
+            "url": { "raw": "{{BASE_URL}}/messages/conversations", "host": ["{{BASE_URL}}"], "path": ["messages","conversations"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "Apply",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{TOKEN}}" } ],
+            "url": { "raw": "{{BASE_URL}}/jobs/{{JOB_ID}}/apply", "host": ["{{BASE_URL}}"], "path": ["jobs","{{JOB_ID}}","apply"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "BASE_URL", "value": "http://localhost:5000/api" },
+    { "key": "TOKEN", "value": "" },
+    { "key": "JOB_ID", "value": "" }
+  ]
+}
+
+
