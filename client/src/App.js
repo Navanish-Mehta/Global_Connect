@@ -62,7 +62,24 @@ function App() {
   useEffect(() => {
     if (isAuthenticated && user) {
       console.log('Attempting to connect to socket...');
-      const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+      
+      // Get socket URL with fallback logic
+      const getSocketUrl = () => {
+        // Check if we're in production (Vercel)
+        if (window.location.hostname.includes('vercel.app')) {
+          return 'https://global-connect-6yfc.onrender.com';
+        }
+        
+        // Check environment variable
+        if (process.env.REACT_APP_SOCKET_URL) {
+          return process.env.REACT_APP_SOCKET_URL;
+        }
+        
+        // Fallback to localhost
+        return 'http://localhost:5000';
+      };
+      
+      const socketUrl = getSocketUrl();
       console.log('Socket URL:', socketUrl);
       
       // Initialize socket connection

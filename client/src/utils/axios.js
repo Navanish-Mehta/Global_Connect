@@ -1,6 +1,24 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Get API URL with fallback logic
+const getApiUrl = () => {
+  // Check if we're in production (Vercel)
+  if (window.location.hostname.includes('vercel.app')) {
+    return 'https://global-connect-6yfc.onrender.com/api';
+  }
+  
+  // Check environment variable
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // Fallback to localhost
+  return 'http://localhost:5000/api';
+};
+
+const API_URL = getApiUrl();
+
+console.log('API URL:', API_URL);
 
 // Create axios instance
 const api = axios.create({
