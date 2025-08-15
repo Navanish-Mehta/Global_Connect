@@ -3,10 +3,10 @@
   "builds": [{ "src": "package.json", "use": "@vercel/static-build" }],
   "routes": [
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/" }
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://your-render-service.onrender.com/api"
+    "REACT_APP_API_URL": "https://global-connect-6yfc.onrender.com"
   }
 }
 
