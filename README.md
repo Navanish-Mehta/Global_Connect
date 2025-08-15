@@ -83,5 +83,5 @@ MIT License © 2025 Navanish Mehta
 See [LICENSE](./LICENSE)
 
 ## Author
-Navanish Mehta
+Navanish Mehta❤️
 
