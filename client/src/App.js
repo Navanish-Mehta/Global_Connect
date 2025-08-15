@@ -34,46 +34,39 @@ import Admin from './pages/Admin';
 import Feed from './pages/Feed';
 
 function App() {
+  console.log('App function called');
+  
   const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector(state => state.auth);
   const { user } = useSelector(state => state.auth);
 
+  console.log('App state:', { isAuthenticated, loading, user });
+
+  // Add error boundary for debugging
   useEffect(() => {
+    console.log('App component mounted');
+    console.log('Environment variables:', {
+      REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+      REACT_APP_SOCKET_URL: process.env.REACT_APP_SOCKET_URL,
+      NODE_ENV: process.env.NODE_ENV
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log('checkAuthStatus effect triggered');
     // Check authentication status on app load
     dispatch(checkAuthStatus());
   }, [dispatch]);
 
-  useEffect(() => {
-    // Auto logout only on browser close, not on refresh
-    const handleBeforeUnload = (event) => {
-      // Only clear token on actual browser close, not refresh
-      if (event.type === 'beforeunload') {
-        // Don't clear token on refresh - let it persist
-        // localStorage.removeItem('token');
-        // sessionStorage.clear();
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        // Optional: Clear sensitive data when tab becomes hidden
-        // localStorage.removeItem('token');
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [dispatch]);
-
+  // Add better error handling for socket connection
   useEffect(() => {
     if (isAuthenticated && user) {
+      console.log('Attempting to connect to socket...');
+      const socketUrl = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+      console.log('Socket URL:', socketUrl);
+      
       // Initialize socket connection
-      const socket = io(process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000', {
+      const socket = io(socketUrl, {
         auth: {
           token: localStorage.getItem('token')
         },
@@ -86,6 +79,7 @@ function App() {
 
       socket.on('connect', () => {
         console.log('Connected to server');
+        dispatch(setSocket(socket));
       });
 
       socket.on('disconnect', () => {
@@ -94,6 +88,7 @@ function App() {
 
       socket.on('connect_error', (error) => {
         console.error('Socket connection error:', error);
+        toast.error('Failed to connect to server. Some features may not work.');
       });
 
       socket.on('reconnect', (attemptNumber) => {
@@ -101,149 +96,76 @@ function App() {
       });
 
       socket.on('reconnect_error', (error) => {
-        console.error('Reconnection error:', error);
+        console.error('Socket reconnection error:', error);
       });
 
-      // Listen for real-time notifications
-      socket.on('notification:new', (notification) => {
-        try {
-          dispatch(addNotification(notification));
-          
-          // Show toast notification
-          const title = notification?.title || 'Notification';
-          const message = notification?.message || '';
-          toast.success(`${title}${message ? `: ${message}` : ''}`);
-          
-          // Refresh related data based on notification type
-          if (notification.type === 'CONNECTION_REQUEST') {
-            dispatch(getConnectionRequests());
-          } else if (notification.type === 'CONNECTION_ACCEPTED') {
-            dispatch(getConnections());
-            dispatch(getConnectionRequests());
-          }
-        } catch (error) {
-          console.error('Error handling notification:', error);
-        }
+      socket.on('reconnect_failed', () => {
+        console.error('Socket reconnection failed');
+        toast.error('Failed to reconnect to server');
       });
 
-      // Listen for real-time messages
-      socket.on('message:new', (message) => {
-        try {
-          dispatch(addMessage(message));
-          
-          // Update unread count for the conversation
-          if (message.senderId !== user._id) {
-            dispatch(updateUnreadCount({ 
-              conversationId: message.senderId, 
-              count: 1 
-            }));
-          }
-        } catch (error) {
-          console.error('Error handling message:', error);
-        }
-      });
-
-      // Listen for connection updates
-      socket.on('connection:accepted', (data) => {
-        try {
-          // Update connection status
-          dispatch(updateConnectionStatus({ 
-            userId: data.userId, 
-            status: 'connected' 
-          }));
-          
-          // Refresh connections and requests
-          dispatch(getConnections());
-          dispatch(getConnectionRequests());
-          
-          toast.success('Connection request accepted!');
-        } catch (error) {
-          console.error('Error handling connection accepted:', error);
-        }
-      });
-
-      // Listen for connection updates
-      socket.on('connection:update', (data) => {
-        try {
-          // Handle connection updates
-          if (data.type === 'accepted') {
-            dispatch(addConnection(data.user));
-          } else if (data.type === 'removed') {
-            dispatch(removeConnectionFromList(data.userId));
-          }
-        } catch (error) {
-          console.error('Error handling connection update:', error);
-        }
-      });
-
-      // Listen for generic notifications (fallback)
-      socket.on('notification', (notification) => {
-        try {
-          const title = notification?.title || 'Notification';
-          const message = notification?.message || '';
-          toast.success(`${title}${message ? `: ${message}` : ''}`);
-          
-          // Refresh connection requests when related
-          if (title.toLowerCase().includes('connection')) {
-            dispatch(getConnectionRequests());
-          }
-        } catch (error) {
-          console.error('Error handling generic notification:', error);
-        }
-      });
-
+      // Store socket in Redux
       dispatch(setSocket(socket));
 
       return () => {
-        if (socket.connected) {
-          socket.disconnect();
-        }
+        socket.disconnect();
       };
     }
   }, [isAuthenticated, user, dispatch]);
 
+  // Add loading state for debugging
   if (loading) {
-    return <LoadingSpinner />;
+    console.log('App is loading...');
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
+  console.log('App render - isAuthenticated:', isAuthenticated, 'user:', user);
+
   return (
-          <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || "1009256838290-iq2q3opv5bevvvok9t94a7vnhmhps4vd.apps.googleusercontent.com"}>
+    <>
       <Helmet>
-        <title>Global Connect - Professional Networking Platform</title>
-        <meta name="description" content="Connect with professionals, share updates, and find job opportunities on Global Connect." />
-        <meta name="keywords" content="networking, professional, jobs, connections, career" />
-        <meta property="og:title" content="Global Connect" />
-        <meta property="og:description" content="Professional Networking Platform" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Global Connect" />
-        <meta name="twitter:description" content="Professional Networking Platform" />
+        <title>Global Connect - Professional Networking</title>
+        <meta name="description" content="Connect with professionals worldwide" />
       </Helmet>
-
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Home />} />
-        <Route path="/register" element={<Home />} />
-        
-        {/* Protected Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route index element={<Feed />} />
-          <Route path="network" element={<Network />} />
-          <Route path="jobs" element={<Jobs />} />
-          <Route path="messages" element={<Messages />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="profile/:userId" element={<Profile />} />
-        </Route>
-
-        {/* Admin Routes */}
-        <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
-        <Route path="/admin/*" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
-
-        {/* 404 Route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </GoogleOAuthProvider>
+      
+      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+        <Routes>
+          {/* Public Routes - Always accessible */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Home />} />
+          <Route path="/register" element={<Home />} />
+          
+          {/* Protected Routes - Require authentication */}
+          <Route path="/dashboard" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<Feed />} />
+            <Route path="feed" element={<Feed />} />
+            <Route path="network" element={<Network />} />
+            <Route path="jobs" element={<Jobs />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="profile/:userId" element={<Profile />} />
+          </Route>
+          
+          {/* Admin Routes - Require admin role */}
+          <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
+          <Route path="/admin/*" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
+          
+          {/* Legacy Routes - Redirect to dashboard */}
+          <Route path="/feed" element={<Navigate to="/dashboard/feed" replace />} />
+          <Route path="/jobs" element={<Navigate to="/dashboard/jobs" replace />} />
+          <Route path="/messages" element={<Navigate to="/dashboard/messages" replace />} />
+          <Route path="/network" element={<Navigate to="/dashboard/network" replace />} />
+          <Route path="/profile" element={<Navigate to="/dashboard/profile" replace />} />
+          
+          {/* 404 Route - Redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </GoogleOAuthProvider>
+    </>
   );
 }
 

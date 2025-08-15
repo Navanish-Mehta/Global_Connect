@@ -8,6 +8,8 @@ import socketReducer from './slices/socketSlice';
 import uiReducer from './slices/uiSlice';
 import notificationReducer from './slices/notificationSlice';
 
+console.log('Initializing Redux store...');
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -27,5 +29,7 @@ export const store = configureStore({
       },
     }),
 });
+
+console.log('Redux store initialized successfully');
 
 export default store;

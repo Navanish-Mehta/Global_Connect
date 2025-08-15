@@ -1,10 +1,23 @@
 {
+<<<<<<< HEAD
   "version": 2,
   "builds": [{ "src": "package.json", "use": "@vercel/static-build" }],
+=======
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "build",
+  "installCommand": "npm install",
+  "framework": "create-react-app",
+>>>>>>> 2a035e9 ( updated project)
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
+<<<<<<< HEAD
     "REACT_APP_API_URL": "https://global-connect-6yfc.onrender.com"
+=======
+    "REACT_APP_API_URL": "https://global-connect-6yfc.onrender.com/api",
+    "REACT_APP_SOCKET_URL": "https://global-connect-6yfc.onrender.com",
+    "REACT_APP_GOOGLE_CLIENT_ID": "1009256838290-iq2q3opv5bevvvok9t94a7vnhmhps4vd.apps.googleusercontent.com"
+>>>>>>> 2a035e9 ( updated project)
   }
 }
