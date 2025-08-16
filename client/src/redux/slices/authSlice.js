@@ -72,21 +72,23 @@ export const logout = createAsyncThunk(
 
 export const loginWithGoogle = createAsyncThunk(
   'auth/loginWithGoogle',
-  async (accessToken, { rejectWithValue }) => {
+  async (response, { rejectWithValue }) => {
     try {
-              // First, get user info from Google using the access token
-        const googleResponse = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
-        }).then(res => res.json());
+      console.log('Google login response:', response);
       
-      // Then send the user info to our backend
-      const response = await api.post('/auth/google', { 
-        token: accessToken,
-        userInfo: googleResponse.data
+      // Send the Google response to our backend
+      const apiResponse = await api.post('/auth/google', { 
+        token: response.access_token,
+        userInfo: {
+          email: response.email,
+          name: response.name,
+          picture: response.picture,
+          id: response.sub || response.id
+        }
       });
       
-      localStorage.setItem('token', response.data.token);
-      return response.data;
+      localStorage.setItem('token', apiResponse.data.token);
+      return apiResponse.data;
     } catch (error) {
       console.error('Google login error:', error);
       return rejectWithValue(error.response?.data?.message || 'Google login failed');
