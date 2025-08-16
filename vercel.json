@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://global-connect-6yfc.onrender.com/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/$1"
+    }
+  ],
+  "env": {
+    "REACT_APP_API_URL": "https://global-connect-6yfc.onrender.com/api",
+    "REACT_APP_GOOGLE_CLIENT_ID": "1009256838290-iq2q3opv5bevvvok9t94a7vnhmhps4vd.apps.googleusercontent.com",
+    "REACT_APP_SOCKET_URL": "https://global-connect-6yfc.onrender.com",
+    "REACT_APP_CLIENT_URL": "https://global-connect-umber.vercel.app"
+  }
+}

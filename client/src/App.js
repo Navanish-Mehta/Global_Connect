@@ -45,7 +45,7 @@ function App() {
     });
     console.log('Google Client ID (hardcoded): 1009256838290-iq2q3opv5bevvvok9t94a7vnhmhps4vd.apps.googleusercontent.com');
     console.log('Google OAuth Provider will be initialized with:', googleClientId);
-  }, []);
+  });
 
   useEffect(() => {
     console.log('checkAuthStatus effect triggered');
@@ -125,11 +125,8 @@ function App() {
     }
   }, [isAuthenticated, user, dispatch]);
 
-  // Add loading state for debugging
-
-
-  // Google Client ID for OAuth
-  const googleClientId = "1009256838290-iq2q3opv5bevvvok9t94a7vnhmhps4vd.apps.googleusercontent.com";
+  // Google Client ID for OAuth - Use environment variable or fallback
+  const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || "1009256838290-iq2q3opv5bevvvok9t94a7vnhmhps4vd.apps.googleusercontent.com";
 
   // Error boundary for Google OAuth
   const [googleOAuthError, setGoogleOAuthError] = useState(false);
@@ -145,7 +142,9 @@ function App() {
     window.addEventListener('error', handleGoogleError);
     return () => window.removeEventListener('error', handleGoogleError);
   }, []);
-    if (loading) {
+
+  // Add loading state for debugging
+  if (loading) {
     console.log('App is loading...');
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
