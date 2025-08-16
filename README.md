@@ -17,6 +17,7 @@ Modern MERN social platform to connect, chat, and apply to jobs. Real-time messa
 
 ### Jobs Page
 <img width="1920" height="1080" alt="Screenshot (266)" src="https://github.com/user-attachments/assets/361641cd-21ba-46a5-a8e6-61f1884e6fca" />
+
 ### Message Page
 <img width="1920" height="1080" alt="Screenshot (267)" src="https://github.com/user-attachments/assets/090458f7-7c5e-4a1d-8029-967fa279a0ab" />
 
