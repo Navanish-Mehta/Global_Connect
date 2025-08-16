@@ -2,6 +2,22 @@
 
 Modern MERN social platform to connect, chat, and apply to jobs. Real-time messaging with Socket.io, rich profiles, posts, notifications, and job applications.
 
+## Screenshot
+### Home Page
+<img width="1920" height="1080" alt="Screenshot (262)" src="https://github.com/user-attachments/assets/0bea75a4-fd0e-40bb-83eb-a70d49920337" />
+### Admin Dashboard
+<img width="1920" height="1080" alt="Screenshot (263)" src="https://github.com/user-attachments/assets/82d2589c-af0d-43f8-b530-ce06a6319a8a" />
+### Post Page
+<img width="1920" height="1080" alt="Screenshot (264)" src="https://github.com/user-attachments/assets/08b5512f-b2d9-4f7a-8ed9-69c9517d3f4b" />
+### Network Page
+<img width="1920" height="1080" alt="Screenshot (265)" src="https://github.com/user-attachments/assets/edf27072-db0b-47da-89b3-55bddc79913c" />
+### Jobs Page
+<img width="1920" height="1080" alt="Screenshot (266)" src="https://github.com/user-attachments/assets/361641cd-21ba-46a5-a8e6-61f1884e6fca" />
+### Message Page
+<img width="1920" height="1080" alt="Screenshot (267)" src="https://github.com/user-attachments/assets/090458f7-7c5e-4a1d-8029-967fa279a0ab" />
+### Profile Page
+<img width="1920" height="1080" alt="Screenshot (268)" src="https://github.com/user-attachments/assets/2ff6eaf5-01cc-44d1-97e4-2db9d480bf22" />
+
 ## Tech Stack
 - Frontend: React, Redux Toolkit, Tailwind CSS
 - Backend: Node.js, Express, MongoDB (Mongoose)
